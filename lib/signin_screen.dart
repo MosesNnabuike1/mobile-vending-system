@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobile_vending_app/signup_screen.dart';
 
-class SigninScreen extends StatelessWidget {
+class SigninScreen extends StatefulWidget {
   const SigninScreen({super.key});
 
+  @override
+  State<SigninScreen> createState() => _SigninScreenState();
+}
+
+class _SigninScreenState extends State<SigninScreen> {
+  bool _rememberMe = false; // State variable for the checkbox
 
   @override
   Widget build(BuildContext context) {
@@ -106,21 +112,22 @@ class SigninScreen extends StatelessWidget {
                         labelText: 'Email',
                         labelStyle: TextStyle(color: Colors.black),
                         hintText: 'Enter your email',
-                        hintStyle: TextStyle(color: Colors.black),
+                        hintStyle: TextStyle(color: Colors.black26), // More faint placeholder
                         floatingLabelBehavior: FloatingLabelBehavior.always, // Always show label on the border
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(15)), // Increased border radius
-                          borderSide: BorderSide(color: Colors.grey, width: 0.5), // Faint border
+                          borderSide: BorderSide(color: Colors.grey, width: 0.2), // More faint border
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(15)), // Increased border radius
-                          borderSide: BorderSide(color: Colors.grey, width: 0.5), // Faint border
+                          borderSide: BorderSide(color: Colors.grey, width: 0.2), // More faint border
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(15)), // Increased border radius
-                          borderSide: BorderSide(color: Colors.grey, width: 0.5), // Faint border
+                          borderSide: BorderSide(color: Colors.grey, width: 0.2), // More faint border
                         ),
                       ),
+                      style: const TextStyle(color: Colors.black), // Ensure entered text is black
                     ),
                     const SizedBox(height: 20),
                     TextField(
@@ -129,35 +136,53 @@ class SigninScreen extends StatelessWidget {
                         labelText: 'Password',
                         labelStyle: TextStyle(color: Colors.black),
                         hintText: 'Enter your password',
-                        hintStyle: TextStyle(color: Colors.black),
+                        hintStyle: TextStyle(color: Colors.black26), // More faint placeholder
                         floatingLabelBehavior: FloatingLabelBehavior.always, // Always show label on the border
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(15)), // Increased border radius
-                          borderSide: BorderSide(color: Colors.grey, width: 0.5), // Faint border
+                          borderSide: BorderSide(color: Colors.grey, width: 0.2), // More faint border
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(15)), // Increased border radius
-                          borderSide: BorderSide(color: Colors.grey, width: 0.5), // Faint border
+                          borderSide: BorderSide(color: Colors.grey, width: 0.2), // More faint border
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(15)), // Increased border radius
-                          borderSide: BorderSide(color: Colors.grey, width: 0.5), // Faint border
+                          borderSide: BorderSide(color: Colors.grey, width: 0.2), // More faint border
                         ),
                       ),
+                      style: const TextStyle(color: Colors.black), // Ensure entered text is black
                     ),
                     const SizedBox(height: 10),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Checkbox(value: false, onChanged: (value) {}),
-                        Text(
-                          'Remember me',
-                          style: TextStyle(
-                            color: Colors.black, // Updated to match theme
-                            fontSize: 12,
-                          ),
+                        Row(
+                          children: [
+                            Transform.scale(
+                              scale: 0.8, // Reduce the size of the checkbox
+                              child: Checkbox(
+                                value: _rememberMe, // Bind to state variable
+                                onChanged: (value) {
+                                  setState(() {
+                                    _rememberMe = value ?? false; // Toggle the checkbox
+                                  });
+                                },
+                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Remove extra padding
+                                activeColor: Colors.deepPurple, // Blue background (same as button color)
+                                checkColor: Colors.white, // White tick
+                                visualDensity: VisualDensity.compact, // Remove additional padding
+                              ),
+                            ),
+                            Text(
+                              'Remember me',
+                              style: const TextStyle(
+                                color: Colors.black, // Updated to match theme
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
                         ),
-
                         Text(
                           'Forgot password',
                           style: TextStyle(
@@ -165,7 +190,6 @@ class SigninScreen extends StatelessWidget {
                             fontSize: 12,
                           ),
                         ),
-                        
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -179,49 +203,49 @@ class SigninScreen extends StatelessWidget {
                       child: const Center(child: Text('Sign in')),
                     ),
                     const SizedBox(height: 20),
-                    Row(
-                      children: const [
-                        Expanded(
-                          child: Divider(
-                            thickness: 1,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            'Sign in with',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            thickness: 1,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          const Icon(Icons.facebook, color: Colors.blue),
-                          const SizedBox(width: 1),
-                          const FaIcon(FontAwesomeIcons.twitter,
-                              color: Colors.lightBlue),
-                          const SizedBox(width: 1),
-                          Image.asset(
-                            'assets/google.png',
-                            width: 24, // Adjust the size as needed
-                            height: 24,
-                          ),
-                          const SizedBox(width: 1),
-                          const Icon(Icons.apple, color: Colors.black),
-                        ],
-                      ),
-                    ),
+                    // Row(
+                    //   children: const [
+                    //     Expanded(
+                    //       child: Divider(
+                    //         thickness: 1,
+                    //         color: Colors.grey,
+                    //       ),
+                    //     ),
+                    //     Padding(
+                    //       padding: EdgeInsets.symmetric(horizontal: 10),
+                    //       child: Text(
+                    //         'Sign in with',
+                    //         style: TextStyle(color: Colors.black),
+                    //       ),
+                    //     ),
+                    //     Expanded(
+                    //       child: Divider(
+                    //         thickness: 1,
+                    //         color: Colors.grey,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    // const SizedBox(height: 20),
+                    // Center(
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //     children: [
+                    //       const Icon(Icons.facebook, color: Colors.blue),
+                    //       const SizedBox(width: 1),
+                    //       const FaIcon(FontAwesomeIcons.twitter,
+                    //           color: Colors.lightBlue),
+                    //       const SizedBox(width: 1),
+                    //       Image.asset(
+                    //         'assets/google.png',
+                    //         width: 24, // Adjust the size as needed
+                    //         height: 24,
+                    //       ),
+                    //       const SizedBox(width: 1),
+                    //       const Icon(Icons.apple, color: Colors.black),
+                    //     ],
+                    //   ),
+                    // ),
                     const SizedBox(height: 20),
                     Center(
                       child: GestureDetector(
@@ -261,7 +285,7 @@ class SigninScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 70),
+                    const SizedBox(height: 80),
                   ],
                 ),
               ),
