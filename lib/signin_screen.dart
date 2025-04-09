@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobile_vending_app/signup_screen.dart';
+import 'package:mobile_vending_app/api_services.dart';
+import 'package:mobile_vending_app/success.dart';
+import 'package:mobile_vending_app/email_verification.dart';
 
 class SigninScreen extends StatefulWidget {
   const SigninScreen({super.key});
@@ -10,7 +12,68 @@ class SigninScreen extends StatefulWidget {
 }
 
 class _SigninScreenState extends State<SigninScreen> {
+  final ApiService _apiService = ApiService('https://bigice.portiola.com/api/v1');
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _rememberMe = false; // State variable for the checkbox
+  bool _isLoading = false; // State variable for loading indicator
+
+  Future<void> _loginUser() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields.')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await _apiService.loginUser(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      if (response['status'] == 'success') {
+        // Check if the user is verified
+        if (response['data']['is_verified'] == true) {
+          // Navigate to the SuccessPage
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const SuccessPage()),
+          );
+        } else {
+          // Show message to verify email and redirect to EmailVerificationPage
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please verify your email before logging in.'),
+            ),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EmailVerificationPage(email: _emailController.text),
+            ),
+          );
+        }
+      } else {
+        // Show other errors
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'] ?? 'Login failed.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +86,8 @@ class _SigninScreenState extends State<SigninScreen> {
               gradient: LinearGradient(
                 colors: [
                   Color(0xFF121212),
-                  Color(0xFF1E1E1E)
-                ], // Updated to match dark theme
+                  Color(0xFF1E1E1E),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -36,8 +99,7 @@ class _SigninScreenState extends State<SigninScreen> {
             left: -50,
             child: CircleAvatar(
               radius: 100,
-              backgroundColor:
-                  Colors.grey.shade800, // Adjusted to match dark theme
+              backgroundColor: Colors.grey.shade800,
             ),
           ),
           Positioned(
@@ -45,8 +107,7 @@ class _SigninScreenState extends State<SigninScreen> {
             right: -30,
             child: CircleAvatar(
               radius: 70,
-              backgroundColor:
-                  Colors.grey.shade700, // Adjusted to match dark theme
+              backgroundColor: Colors.grey.shade700,
             ),
           ),
           Positioned(
@@ -54,8 +115,7 @@ class _SigninScreenState extends State<SigninScreen> {
             left: 50,
             child: CircleAvatar(
               radius: 50,
-              backgroundColor:
-                  Colors.grey.shade900, // Adjusted to match dark theme
+              backgroundColor: Colors.grey.shade900,
             ),
           ),
           // Back Arrow and Text
@@ -64,7 +124,7 @@ class _SigninScreenState extends State<SigninScreen> {
             left: 20,
             child: GestureDetector(
               onTap: () {
-                Navigator.pop(context); // Navigate back to the previous screen
+                Navigator.pop(context);
               },
               child: Row(
                 children: const [
@@ -78,16 +138,16 @@ class _SigninScreenState extends State<SigninScreen> {
               ),
             ),
           ),
-          // Sign Up Form
+          // Sign In Form
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              width: double.infinity, // Fill the width
+              width: double.infinity,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20), // Rounded top-left corner
-                  topRight: Radius.circular(20), // Rounded top-right corner
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
@@ -101,57 +161,58 @@ class _SigninScreenState extends State<SigninScreen> {
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.deepPurple, // Updated to match theme
+                          color: Colors.deepPurple,
                         ),
                       ),
                     ),
                     const SizedBox(height: 20),
-                    
                     TextField(
+                      controller: _emailController,
                       decoration: const InputDecoration(
                         labelText: 'Email',
                         labelStyle: TextStyle(color: Colors.black),
                         hintText: 'Enter your email',
-                        hintStyle: TextStyle(color: Colors.black26), // More faint placeholder
-                        floatingLabelBehavior: FloatingLabelBehavior.always, // Always show label on the border
+                        hintStyle: TextStyle(color: Colors.black26),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)), // Increased border radius
-                          borderSide: BorderSide(color: Colors.grey, width: 0.2), // More faint border
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderSide: BorderSide(color: Colors.grey, width: 0.2),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)), // Increased border radius
-                          borderSide: BorderSide(color: Colors.grey, width: 0.2), // More faint border
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderSide: BorderSide(color: Colors.grey, width: 0.2),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)), // Increased border radius
-                          borderSide: BorderSide(color: Colors.grey, width: 0.2), // More faint border
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderSide: BorderSide(color: Colors.grey, width: 0.2),
                         ),
                       ),
-                      style: const TextStyle(color: Colors.black), // Ensure entered text is black
+                      style: const TextStyle(color: Colors.black),
                     ),
                     const SizedBox(height: 20),
                     TextField(
+                      controller: _passwordController,
                       obscureText: true,
                       decoration: const InputDecoration(
                         labelText: 'Password',
                         labelStyle: TextStyle(color: Colors.black),
                         hintText: 'Enter your password',
-                        hintStyle: TextStyle(color: Colors.black26), // More faint placeholder
-                        floatingLabelBehavior: FloatingLabelBehavior.always, // Always show label on the border
+                        hintStyle: TextStyle(color: Colors.black26),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)), // Increased border radius
-                          borderSide: BorderSide(color: Colors.grey, width: 0.2), // More faint border
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderSide: BorderSide(color: Colors.grey, width: 0.2),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)), // Increased border radius
-                          borderSide: BorderSide(color: Colors.grey, width: 0.2), // More faint border
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderSide: BorderSide(color: Colors.grey, width: 0.2),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)), // Increased border radius
-                          borderSide: BorderSide(color: Colors.grey, width: 0.2), // More faint border
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderSide: BorderSide(color: Colors.grey, width: 0.2),
                         ),
                       ),
-                      style: const TextStyle(color: Colors.black), // Ensure entered text is black
+                      style: const TextStyle(color: Colors.black),
                     ),
                     const SizedBox(height: 10),
                     Row(
@@ -160,33 +221,33 @@ class _SigninScreenState extends State<SigninScreen> {
                         Row(
                           children: [
                             Transform.scale(
-                              scale: 0.8, // Reduce the size of the checkbox
+                              scale: 0.8,
                               child: Checkbox(
-                                value: _rememberMe, // Bind to state variable
+                                value: _rememberMe,
                                 onChanged: (value) {
                                   setState(() {
-                                    _rememberMe = value ?? false; // Toggle the checkbox
+                                    _rememberMe = value ?? false;
                                   });
                                 },
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Remove extra padding
-                                activeColor: Colors.deepPurple, // Blue background (same as button color)
-                                checkColor: Colors.white, // White tick
-                                visualDensity: VisualDensity.compact, // Remove additional padding
+                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                activeColor: Colors.deepPurple,
+                                checkColor: Colors.white,
+                                visualDensity: VisualDensity.compact,
                               ),
                             ),
-                            Text(
+                            const Text(
                               'Remember me',
-                              style: const TextStyle(
-                                color: Colors.black, // Updated to match theme
+                              style: TextStyle(
+                                color: Colors.black,
                                 fontSize: 12,
                               ),
                             ),
                           ],
                         ),
-                        Text(
+                        const Text(
                           'Forgot password',
                           style: TextStyle(
-                            color: Colors.black, // Updated to match theme
+                            color: Colors.black,
                             fontSize: 12,
                           ),
                         ),
@@ -194,58 +255,15 @@ class _SigninScreenState extends State<SigninScreen> {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: _isLoading ? null : _loginUser,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Colors.deepPurple, // Updated to match theme
+                        backgroundColor: Colors.deepPurple,
                         foregroundColor: Colors.white,
                       ),
-                      child: const Center(child: Text('Sign in')),
+                      child: _isLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Center(child: Text('Sign in')),
                     ),
-                    const SizedBox(height: 20),
-                    // Row(
-                    //   children: const [
-                    //     Expanded(
-                    //       child: Divider(
-                    //         thickness: 1,
-                    //         color: Colors.grey,
-                    //       ),
-                    //     ),
-                    //     Padding(
-                    //       padding: EdgeInsets.symmetric(horizontal: 10),
-                    //       child: Text(
-                    //         'Sign in with',
-                    //         style: TextStyle(color: Colors.black),
-                    //       ),
-                    //     ),
-                    //     Expanded(
-                    //       child: Divider(
-                    //         thickness: 1,
-                    //         color: Colors.grey,
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                    // const SizedBox(height: 20),
-                    // Center(
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //     children: [
-                    //       const Icon(Icons.facebook, color: Colors.blue),
-                    //       const SizedBox(width: 1),
-                    //       const FaIcon(FontAwesomeIcons.twitter,
-                    //           color: Colors.lightBlue),
-                    //       const SizedBox(width: 1),
-                    //       Image.asset(
-                    //         'assets/google.png',
-                    //         width: 24, // Adjust the size as needed
-                    //         height: 24,
-                    //       ),
-                    //       const SizedBox(width: 1),
-                    //       const Icon(Icons.apple, color: Colors.black),
-                    //     ],
-                    //   ),
-                    // ),
                     const SizedBox(height: 20),
                     Center(
                       child: GestureDetector(
@@ -256,7 +274,7 @@ class _SigninScreenState extends State<SigninScreen> {
                               pageBuilder: (context, animation, secondaryAnimation) =>
                                   const SignUpScreen(),
                               transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                const begin = Offset(1.0, 0.0); // Slide in from the right
+                                const begin = Offset(1.0, 0.0);
                                 const end = Offset.zero;
                                 const curve = Curves.easeInOut;
 

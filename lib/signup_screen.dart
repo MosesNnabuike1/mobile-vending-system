@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobile_vending_app/signin_screen.dart';
 import 'package:mobile_vending_app/api_services.dart';
+import 'package:mobile_vending_app/email_verification.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -42,21 +43,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
           username: _usernameController.text,
         );
 
-        // Handle successful registration
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Registration successful: ${response['message']}')),
-        );
+        // Check if the response contains success information
+        if (response.containsKey('success') && response['success'] == true) {
+          // Debugging: Print the response
+          print('Registration Successful: $response');
 
-        // Navigate to the SigninScreen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const SigninScreen()),
-        );
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Registration successful, please check email to confirm.'),
+            ),
+          );
+
+          // Navigate to the EmailVerificationPage with the email
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EmailVerificationPage(email: _emailController.text),
+            ),
+          );
+        } else {
+          // Handle unsuccessful registration
+          final errorMessage = response['message'] ?? 'Registration failed. Please try again.';
+          print('Registration Failed: $response');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $errorMessage')),
+          );
+        }
       } catch (e) {
-        // Handle errors
+        // Debugging: Print the error
+        print('Registration Error: $e');
+
+        // Display detailed error message in the UI
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration failed: $e')),
+          SnackBar(content: Text('Error: ${e.toString()}')),
         );
       } finally {
         setState(() {
@@ -162,34 +181,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20), // Add more space below "Get Started"
+                      const SizedBox(
+                          height: 20), // Add more space below "Get Started"
                       TextFormField(
                         controller: _nameController,
                         decoration: const InputDecoration(
                           labelText: 'Full Name',
                           labelStyle: TextStyle(color: Colors.black),
                           hintText: 'Enter your full name',
-                          hintStyle: TextStyle(color: Colors.black26), // More faint placeholder
+                          hintStyle: TextStyle(
+                              color: Colors.black26), // More faint placeholder
                           floatingLabelBehavior: FloatingLabelBehavior
                               .always, // Always show label on the border
-                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12), // Reduced height
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 12), // Reduced height
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(
                                 Radius.circular(15)), // Increased border radius
                             borderSide: BorderSide(
-                                color: Colors.grey, width: 0.2), // More faint border
+                                color: Colors.grey,
+                                width: 0.2), // More faint border
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(
                                 Radius.circular(15)), // Increased border radius
                             borderSide: BorderSide(
-                                color: Colors.grey, width: 0.2), // More faint border
+                                color: Colors.grey,
+                                width: 0.2), // More faint border
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(
                                 Radius.circular(15)), // Increased border radius
                             borderSide: BorderSide(
-                                color: Colors.grey, width: 0.2), // More faint border
+                                color: Colors.grey,
+                                width: 0.2), // More faint border
                           ),
                         ),
                         validator: (value) {
@@ -198,7 +223,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                           return null;
                         },
-                        style: const TextStyle(color: Colors.black), // Ensure entered text is black
+                        style: const TextStyle(
+                            color:
+                                Colors.black), // Ensure entered text is black
                       ),
                       const SizedBox(height: 20),
                       TextFormField(
@@ -207,27 +234,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           labelText: 'Email',
                           labelStyle: TextStyle(color: Colors.black),
                           hintText: 'Enter your email',
-                          hintStyle: TextStyle(color: Colors.black26), // More faint placeholder
+                          hintStyle: TextStyle(
+                              color: Colors.black26), // More faint placeholder
                           floatingLabelBehavior: FloatingLabelBehavior
                               .always, // Always show label on the border
-                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12), // Reduced height
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 12), // Reduced height
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(
                                 Radius.circular(15)), // Increased border radius
                             borderSide: BorderSide(
-                                color: Colors.grey, width: 0.2), // More faint border
+                                color: Colors.grey,
+                                width: 0.2), // More faint border
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(
                                 Radius.circular(15)), // Increased border radius
                             borderSide: BorderSide(
-                                color: Colors.grey, width: 0.2), // More faint border
+                                color: Colors.grey,
+                                width: 0.2), // More faint border
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(
                                 Radius.circular(15)), // Increased border radius
                             borderSide: BorderSide(
-                                color: Colors.grey, width: 0.2), // More faint border
+                                color: Colors.grey,
+                                width: 0.2), // More faint border
                           ),
                         ),
                         validator: (value) {
@@ -239,7 +271,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                           return null;
                         },
-                        style: const TextStyle(color: Colors.black), // Ensure entered text is black
+                        style: const TextStyle(
+                            color:
+                                Colors.black), // Ensure entered text is black
                       ),
                       const SizedBox(height: 20),
                       TextFormField(
@@ -248,7 +282,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           labelText: 'Phone',
                           labelStyle: TextStyle(color: Colors.black),
                           hintText: 'Enter your phone number',
-                          hintStyle: TextStyle(color: Colors.black38), // Faint placeholder
+                          hintStyle: TextStyle(
+                              color: Colors.black38), // Faint placeholder
                           floatingLabelBehavior: FloatingLabelBehavior
                               .always, // Always show label on the border
                           border: OutlineInputBorder(
@@ -276,7 +311,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                           return null;
                         },
-                        style: const TextStyle(color: Colors.black), // Ensure entered text is black
+                        style: const TextStyle(
+                            color:
+                                Colors.black), // Ensure entered text is black
                       ),
                       const SizedBox(height: 20),
                       TextFormField(
@@ -285,7 +322,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           labelText: 'Username',
                           labelStyle: TextStyle(color: Colors.black),
                           hintText: 'Enter your username',
-                          hintStyle: TextStyle(color: Colors.black38), // Faint placeholder
+                          hintStyle: TextStyle(
+                              color: Colors.black38), // Faint placeholder
                           floatingLabelBehavior: FloatingLabelBehavior
                               .always, // Always show label on the border
                           border: OutlineInputBorder(
@@ -313,7 +351,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                           return null;
                         },
-                        style: const TextStyle(color: Colors.black), // Ensure entered text is black
+                        style: const TextStyle(
+                            color:
+                                Colors.black), // Ensure entered text is black
                       ),
                       const SizedBox(height: 20),
                       TextFormField(
@@ -323,23 +363,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           labelText: 'Password',
                           labelStyle: const TextStyle(color: Colors.black),
                           hintText: 'Enter your password',
-                          hintStyle: const TextStyle(color: Colors.black26), // More faint placeholder
+                          hintStyle: const TextStyle(
+                              color: Colors.black26), // More faint placeholder
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12), // Reduced height
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 12), // Reduced height
                           border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
-                            borderSide:
-                                BorderSide(color: Colors.grey, width: 0.2), // More faint border
+                            borderSide: BorderSide(
+                                color: Colors.grey,
+                                width: 0.2), // More faint border
                           ),
                           enabledBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
-                            borderSide:
-                                BorderSide(color: Colors.grey, width: 0.2), // More faint border
+                            borderSide: BorderSide(
+                                color: Colors.grey,
+                                width: 0.2), // More faint border
                           ),
                           focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
-                            borderSide:
-                                BorderSide(color: Colors.grey, width: 0.2), // More faint border
+                            borderSide: BorderSide(
+                                color: Colors.grey,
+                                width: 0.2), // More faint border
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -364,7 +409,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                           return null;
                         },
-                        style: const TextStyle(color: Colors.black), // Ensure entered text is black
+                        style: const TextStyle(
+                            color:
+                                Colors.black), // Ensure entered text is black
                       ),
                       const SizedBox(height: 20),
                       TextFormField(
@@ -374,9 +421,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           labelText: 'Confirm Password',
                           labelStyle: const TextStyle(color: Colors.black),
                           hintText: 'Re-enter your password',
-                          hintStyle: const TextStyle(color: Colors.black38), // Faint placeholder
+                          hintStyle: const TextStyle(
+                              color: Colors.black38), // Faint placeholder
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12), // Reduced height
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 12), // Reduced height
                           border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
                             borderSide:
@@ -416,7 +465,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                           return null;
                         },
-                        style: const TextStyle(color: Colors.black), // Ensure entered text is black
+                        style: const TextStyle(
+                            color:
+                                Colors.black), // Ensure entered text is black
                       ),
                       const SizedBox(height: 10),
                       Row(
@@ -428,13 +479,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               value: _agreeToTerms, // Bind to state variable
                               onChanged: (value) {
                                 setState(() {
-                                  _agreeToTerms = value ?? false; // Toggle the checkbox
+                                  _agreeToTerms =
+                                      value ?? false; // Toggle the checkbox
                                 });
                               },
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Remove extra padding
-                              activeColor: Colors.deepPurple, // Blue background (same as button color)
+                              materialTapTargetSize: MaterialTapTargetSize
+                                  .shrinkWrap, // Remove extra padding
+                              activeColor: Colors
+                                  .deepPurple, // Blue background (same as button color)
                               checkColor: Colors.white, // White tick
-                              visualDensity: VisualDensity.compact, // Remove additional padding
+                              visualDensity: VisualDensity
+                                  .compact, // Remove additional padding
                             ),
                           ),
                           const Text(
@@ -454,15 +509,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       const SizedBox(height: 20),
                       SizedBox(
-                        width: double.infinity, // Match the width of the textboxes
+                        width:
+                            double.infinity, // Match the width of the textboxes
                         child: ElevatedButton(
                           onPressed: _isLoading ? null : _registerUser,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple, // Updated to match theme
+                            backgroundColor:
+                                Colors.deepPurple, // Updated to match theme
                             foregroundColor: Colors.white,
                           ),
                           child: _isLoading
-                              ? const CircularProgressIndicator(color: Colors.white)
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white)
                               : const Text('Sign up'),
                         ),
                       ),
