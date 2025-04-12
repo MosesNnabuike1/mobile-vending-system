@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
-import 'package:mobile_vending_app/api_services.dart';
+import 'package:mobile_vending_app/api_repository.dart';
 import 'package:mobile_vending_app/signin_screen.dart';
 
 class EmailVerificationPage extends StatefulWidget {
@@ -13,12 +13,13 @@ class EmailVerificationPage extends StatefulWidget {
 }
 
 class _EmailVerificationPageState extends State<EmailVerificationPage> {
-  final ApiService _apiService = ApiService('https://bigice.portiola.com/api/v1');
+  final ApiRepository _apiRepository = ApiRepository(); // Updated to use ApiRepository
   final List<TextEditingController> _controllers =
       List.generate(4, (_) => TextEditingController());
   String _errorMessage = ""; // Error message to display
   bool _isVerifying = false; // State for verifying process
-  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 600; // 60 seconds
+  int endTime =
+      DateTime.now().millisecondsSinceEpoch + 1000 * 600; // 60 seconds
 
   void _verifyCode() async {
     String enteredCode = _controllers.map((c) => c.text).join();
@@ -36,9 +37,22 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
     });
 
     try {
-      final response = await _apiService.verifyEmail(token: enteredCode);
+      // Pass both email and token to the API
+      final response = await _apiRepository.verifyEmail(
+        email: widget.email, // Use the email passed from the registration page
+        token: enteredCode, // Ensure the token is passed correctly
+      );
 
-      if (response['status'] == 'success') {
+      if (response['success'] == true) {
+        // Use the success message from the JSON response
+        final successMessage = response['message'] ?? "Email Verified!";
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(successMessage),
+            backgroundColor: Colors.green,
+          ),
+        );
+
         // Navigate to the Signin page
         Navigator.pushReplacement(
           context,
@@ -47,7 +61,8 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
       } else {
         // Display error message if the code is invalid
         setState(() {
-          _errorMessage = response['message'] ?? "Invalid code. Please try again.";
+          _errorMessage =
+              response['message'] ?? "Invalid code. Please try again.";
         });
       }
     } catch (e) {

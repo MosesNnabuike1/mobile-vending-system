@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobile_vending_app/signin_screen.dart';
-import 'package:mobile_vending_app/api_services.dart';
+import 'package:mobile_vending_app/api_repository.dart';
 import 'package:mobile_vending_app/email_verification.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -12,9 +12,9 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final ApiService _apiService =
-      ApiService('https://bigice.portiola.com/api/v1');
-  final _formKey = GlobalKey<FormState>();
+  final ApiRepository _apiRepository =
+      ApiRepository(); // Initialize the API repository
+  final _formKey = GlobalKey<FormState>(); // Form key for validation
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -34,7 +34,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
 
       try {
-        final response = await _apiService.registerUser(
+        final response = await _apiRepository.registerUser(
           name: _nameController.text,
           email: _emailController.text,
           password: _passwordController.text,
@@ -50,7 +50,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Registration successful, please check email to confirm.'),
+              content: Text(
+                  'Registration successful, please check email to confirm.'),
             ),
           );
 
@@ -58,12 +59,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => EmailVerificationPage(email: _emailController.text),
+              builder: (context) =>
+                  EmailVerificationPage(email: _emailController.text),
             ),
           );
         } else {
           // Handle unsuccessful registration
-          final errorMessage = response['message'] ?? 'Registration failed. Please try again.';
+          final errorMessage =
+              response['message'] ?? 'Registration failed. Please try again.';
           print('Registration Failed: $response');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error: $errorMessage')),
