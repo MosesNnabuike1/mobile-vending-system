@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
-import 'package:mobile_vending_app/api_repository.dart';
-import 'package:mobile_vending_app/signin_screen.dart';
+import '../services/api_repository.dart'; // Corrected directory reference
+import 'signin_screen.dart'; // Corrected directory reference
 
 class EmailVerificationPage extends StatefulWidget {
   final String email; // Email passed from the registration page

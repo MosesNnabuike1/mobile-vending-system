@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_vending_app/forgot_password.dart';
-import 'package:mobile_vending_app/signup_screen.dart';
-import 'package:mobile_vending_app/api_repository.dart';
-import 'package:mobile_vending_app/success.dart';
-import 'package:mobile_vending_app/email_verification.dart';
+import 'package:mobile_vending_app/screens/forgot_password.dart';
+import 'package:mobile_vending_app/screens/signup_screen.dart';
+import 'package:mobile_vending_app/services/api_repository.dart';
+import 'package:mobile_vending_app/screens/success.dart';
+import 'package:mobile_vending_app/screens/email_verification.dart';
 
 class SigninScreen extends StatefulWidget {
   const SigninScreen({super.key});

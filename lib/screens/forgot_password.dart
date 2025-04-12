@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_vending_app/signin_screen.dart';
+import 'package:mobile_vending_app/screens/signin_screen.dart';
 
 class ForgotPassword extends StatelessWidget {
   const ForgotPassword({super.key});

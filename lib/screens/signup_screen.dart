@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mobile_vending_app/signin_screen.dart';
-import 'package:mobile_vending_app/api_repository.dart';
-import 'package:mobile_vending_app/email_verification.dart';
+import 'package:mobile_vending_app/screens/signin_screen.dart';
+import 'package:mobile_vending_app/services/api_repository.dart';
+import 'package:mobile_vending_app/screens/email_verification.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

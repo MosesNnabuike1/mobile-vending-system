@@ -1,7 +1,36 @@
-import 'package:mobile_vending_app/api_services.dart'; // Import the ApiProvider class
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+class ApiProvider {
+  final String baseUrl;
+
+  ApiProvider(this.baseUrl);
+
+  Future<Map<String, dynamic>> post(String endpoint, Map<String, dynamic> body) async {
+    final url = Uri.parse('$baseUrl$endpoint');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return jsonDecode(response.body);
+      } else {
+        final errorResponse = jsonDecode(response.body);
+        throw Exception(errorResponse['message'] ?? 'Unknown error occurred');
+      }
+    } catch (e) {
+      throw Exception('Error during POST request: $e');
+    }
+  }
+}
 
 class ApiRepository {
-  final ApiProvider _apiProvider = ApiProvider(); // Use centralized ApiProvider
+  final ApiProvider _apiProvider;
+
+  ApiRepository(String baseUrl) : _apiProvider = ApiProvider(baseUrl);
 
   Future<Map<String, dynamic>> registerUser({
     required String name,

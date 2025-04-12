@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  http: ^1.3.0 # Updated to a compatible version
+  http: ^1.3.0
   font_awesome_flutter: ^10.5.0
   flutter_countdown_timer: ^4.1.0
 
@@ -27,13 +27,11 @@ flutter:
     - assets/google.png
     - assets/email.png
   fonts:
-    - family: Poppins
-      fonts:
-        - asset: assets/fonts/Poppins/Poppins-Light.ttf
-          weight: 300
-        - asset: assets/fonts/Poppins/Poppins-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/Poppins/Poppins-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Poppins/Poppins-Bold.ttf
-          weight: 700
+    - asset: assets/fonts/Poppins/Poppins-Light.ttf
+      weight: 300
+    - asset: assets/fonts/Poppins/Poppins-Regular.ttf
+      weight: 400
+    - asset: assets/fonts/Poppins/Poppins-Medium.ttf
+      weight: 500
+    - asset: assets/fonts/Poppins/Poppins-Bold.ttf
+      weight: 700

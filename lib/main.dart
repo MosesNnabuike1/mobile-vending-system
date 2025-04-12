@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_vending_app/splash_screen.dart';
+import 'package:mobile_vending_app/screens/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
